@@ -133,4 +133,4 @@ $autoload['language'] = array();
 |
 |	$autoload['model'] = array('first_model' => 'first');
 */
-$autoload['model'] = array('superManager_model','directManager_model','employee_model');
+$autoload['model'] = array('superManager_model','directManager_model','employee_model', 'evaluation_model');

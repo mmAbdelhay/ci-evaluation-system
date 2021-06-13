@@ -72,5 +72,33 @@ class SuperManager extends CI_Controller{
         redirect('superManager/login');
     }
 
+    public function allPendingEvaluation(){
+        if($this->session->userdata('role') != 'superManager'){
+            redirect('superManager/login');
+        }
+        $data['evaluations'] = $this->evaluation_model->getAllPendingEvaluation($this->session->userdata('user_id'));
+        $this->load->view('template/header');
+        $this->load->view('superManager/allPendingEvaluations', $data);
+        $this->load->view('template/footer');
+    }
+
+    public function acceptEvaluation(){
+        if($this->session->userdata('role') != 'superManager'){
+            redirect('superManager/login');
+        }
+        $this->evaluation_model->acceptEvaluation($this->input->post('id'),$this->session->userdata('user_id'));
+        $this->session->set_flashdata('evaluation_accepted', 'Evaluation accepted successfully');
+        redirect('superManager/allPendingEvaluation');
+    }
+
+    public function rejectEvaluation(){
+        if($this->session->userdata('role') != 'superManager'){
+            redirect('superManager/login');
+        }
+        $this->evaluation_model->rejectEvaluation($this->input->post('id'),$this->session->userdata('user_id'));
+        $this->session->set_flashdata('evaluation_rejected', 'Evaluation rejected successfully');
+        redirect('superManager/allPendingEvaluation');
+    }
+
 
 }

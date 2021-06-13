@@ -78,5 +78,35 @@ class DirectManager extends CI_Controller{
         redirect('directManager/login');
     }
 
+    public function index(){
+        if($this->session->userdata('role') != 'directManager'){
+            redirect('directManager/login');
+        }
 
+        if (date("Y-m-d") >= date('Y-06-30')){
+            $period = 'second';
+        }else{
+            $period = 'first';
+        }
+        $data['employees'] = $this->employee_model->getAllNonEvaluatedEmployees($this->session->userdata('user_id'),$period);
+        $this->load->view('template/header');
+        $this->load->view('directManager/allNonEvaluated', $data);
+        $this->load->view('template/footer');
+    }
+
+    public function getAllEvaluatedEmployees(){
+        if($this->session->userdata('role') != 'directManager'){
+            redirect('directManager/login');
+        }
+        $data['employees'] = $this->employee_model->getAllEvaluatedEmployees($this->session->userdata('user_id'));
+        foreach ($data['employees'] as $employee){
+            $employee->firstAvg = ((
+                        (int)$employee->quality_of_work + (int)$employee->technical_skills + (int)$employee->creativity + (int)$employee->honesty + (int)$employee->attendance + (int)$employee->productivity + (int)$employee->independent_work + (int)$employee->communication + (int)$employee->integrity + (int)$employee->punctuality + (int)$employee->coworker_relations + (int)$employee->work_consistency
+                    ) / 60) * 5;
+            $employee->totalScore = (((int)$employee->firstAvg + (int)$employee->administrative) / 10) * 100;
+        }
+        $this->load->view('template/header');
+        $this->load->view('directManager/allEvaluated', $data);
+        $this->load->view('template/footer');
+    }
 }
